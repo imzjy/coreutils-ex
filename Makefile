@@ -19,7 +19,7 @@ lstree: lstree.o
 	$(CC) $(OBJ)/lstree.o -o $(BIN)/lstree
 
 lstree.o: $(SRC)/lstree.c
-	$(CC) -c $(SRC)/lstree.c -o $(OBJ)/lstree.o
+	$(CC) $(CFLAGS) $(SRC)/lstree.c -o $(OBJ)/lstree.o
 
 chmod:
 	chmod +x $(BIN)/*
