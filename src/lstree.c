@@ -46,6 +46,9 @@ print_dir(int indent_level, char *dirname)
 				sprintf(dirpath,"%s/%s", dirname, ptr->d_name);
 				print_dir(indent_level + 1, dirpath);					
 			}
+			else if(ptr->d_type == DT_LNK){
+				fprintf(stdout, "%s%s@\n", indentBuf, ptr->d_name);
+			}
 		}
 	}
 	return 0;
