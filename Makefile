@@ -1,5 +1,5 @@
 CC := gcc
-CFLAGS := -c -Wall
+CFLAGS := -c -Wall -g
 INCLUDES := -I
 LIBS := -L/usr/X11R6/lib
 

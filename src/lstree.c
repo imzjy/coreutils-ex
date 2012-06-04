@@ -2,9 +2,13 @@
 #include <dirent.h>
 #include <string.h>
 
+#define INDENT 4
+
 int
-print_dir(char *dirname)
+print_dir(int indent_level, char *dirname)
 {
+	char indentBuf[1024] = "";
+	int blankspace = indent_level * INDENT;
 	DIR *dirp;
 	struct dirent *ptr;
 
@@ -15,15 +19,22 @@ print_dir(char *dirname)
 			if(strcmp(ptr->d_name, ".") == 0 ||
 					strcmp(ptr->d_name, "..") == 0)
 				continue;
+			
+			//calc indent space
+			while(blankspace > 0){
+				strcat(indentBuf, " ");
+				blankspace--;
+			}		
 
+			if(ptr->d_type == DT_REG){
+				fprintf(stdout, "%s%s\n", indentBuf, ptr->d_name);
+			}
+			else if(ptr->d_type == DT_DIR){
+				fprintf(stdout, "%s%s/\n", indentBuf, ptr->d_name);
 
-			printf("%s\n", ptr->d_name);	
-
-			if (ptr->d_type == DT_DIR){
 				char dirpath[256];
 				sprintf(dirpath,"%s/%s", dirname, ptr->d_name);
-				//printf("%s\n",dirpath);
-				print_dir(dirpath);					
+				print_dir(++indent_level, dirpath);					
 			}
 		}
 	}
@@ -34,7 +45,7 @@ print_dir(char *dirname)
 int
 main()
 {
-	print_dir(".");
+	print_dir(0,".");
 
 	return 0;	
 }
