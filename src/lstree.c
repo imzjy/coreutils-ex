@@ -57,7 +57,10 @@ main(int argc, char *argv[])
 {
 
 	int opt;
+	int index;
+	char dirname[256] = ".";
 
+	//options parameter
 	while ((opt = getopt(argc, argv, "at:")) != -1) {
 		switch (opt) {
 			case 'a':
@@ -73,7 +76,14 @@ main(int argc, char *argv[])
 	}
 
 				
-	print_dir(0,".");
+	//non-options paramter, assume a directory
+	for(index = optind; index < argc; index++)
+		sprintf(dirname, "%s", argv[index]);
+	
+	//check dirname is a direcotry	
+	//printf("%s\n",dirname);
+
+	print_dir(0,dirname);
 
 	return 0;	
 }
