@@ -1,4 +1,5 @@
 1, add options to ignore the hide files/directories.[fixed]
 2, add path parameter, such lstree path_name [fixed]
-3, add symblic support,print symbol link and print which it reference
+3, add symblic support,print symbol link and print which it reference [fixed]
 4, add option -L(level) num, which specify the max depth of directory to scan
+5, print the directory name when listing more than one directory, such sign as prefix?

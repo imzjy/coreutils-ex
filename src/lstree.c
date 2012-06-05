@@ -78,8 +78,10 @@ print_dir(int indent_level, char *dirname)
 				sprintf(pathBuf,"%s/%s", dirname, ptr->d_name);
 
 				plink_fullpath = readlink_malloc(pathBuf);
-				fprintf(stdout, "%s%s@ -> %s\n", indentBuf, ptr->d_name, plink_fullpath);
-				free(plink_fullpath);
+				if(plink_fullpath != NULL){
+					fprintf(stdout, "%s%s@ -> %s\n", indentBuf, ptr->d_name, plink_fullpath);
+					free(plink_fullpath);
+				}
 			}
 		}
 	}
@@ -111,8 +113,10 @@ main(int argc, char *argv[])
 	}
 
 				
-	//non-options paramter, assume a directory
-	for(index = optind; index < argc; index++){
+	if(optind >= argc){ //no additinal params
+		print_dir(0, dirname);
+	}
+	for(index = optind; index < argc; index++){ //non-options paramter, assume a directory
 		sprintf(dirname, "%s", argv[index]);
 		print_dir(0, dirname);
 	}
