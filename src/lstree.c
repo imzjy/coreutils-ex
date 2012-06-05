@@ -1,16 +1,45 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <unistd.h>
 #include <dirent.h>
 #include <string.h>
 
 #define INDENT 4
 
-static int flag_hide = 1; //default do not listing hide file/directory
+/* default do not listing hide file and directory */
+static int flag_hide = 1; 
 
+/* return NULL terminated string with dynamic allocated buffer */
+/* do not forget release the buffer when use the function */
+char*
+readlink_malloc(const char *link_name)
+{
+	int size = 100;
+	char *buffer = NULL;	
+
+	while(1){
+		buffer = (char *)realloc(buffer,size + 1);
+		int nchars = readlink(link_name, buffer, size);
+		if(nchars < 0){
+			free(buffer);
+			return NULL;
+		}
+		if(nchars < size){
+			buffer[nchars] = '\0';
+			return buffer;
+		}
+		size *= 2;
+	}
+}
+
+
+/* print the directory content with indent */
 int
 print_dir(int indent_level, char *dirname)
 {
 	char indentBuf[1024] = "";
+	char pathBuf[1024] = "";
+	char *plink_fullpath;
 	int blankspace = indent_level * INDENT;
 	DIR *dirp;
 	struct dirent *ptr;
@@ -42,12 +71,15 @@ print_dir(int indent_level, char *dirname)
 			else if(ptr->d_type == DT_DIR){
 				fprintf(stdout, "%s%s/\n", indentBuf, ptr->d_name);
 
-				char dirpath[256];
-				sprintf(dirpath,"%s/%s", dirname, ptr->d_name);
-				print_dir(indent_level + 1, dirpath);					
+				sprintf(pathBuf, "%s/%s", dirname, ptr->d_name);
+				print_dir(indent_level + 1, pathBuf);					
 			}
 			else if(ptr->d_type == DT_LNK){
-				fprintf(stdout, "%s%s@\n", indentBuf, ptr->d_name);
+				sprintf(pathBuf,"%s/%s", dirname, ptr->d_name);
+
+				plink_fullpath = readlink_malloc(pathBuf);
+				fprintf(stdout, "%s%s@ -> %s\n", indentBuf, ptr->d_name, plink_fullpath);
+				free(plink_fullpath);
 			}
 		}
 	}
@@ -80,13 +112,13 @@ main(int argc, char *argv[])
 
 				
 	//non-options paramter, assume a directory
-	for(index = optind; index < argc; index++)
+	for(index = optind; index < argc; index++){
 		sprintf(dirname, "%s", argv[index]);
+		print_dir(0, dirname);
+	}
 	
 	//check dirname is a direcotry	
 	//printf("%s\n",dirname);
-
-	print_dir(0,dirname);
 
 	return 0;	
 }
