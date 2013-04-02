@@ -13,7 +13,7 @@ pre:
 	mkdir -p $(BIN)
 	mkdir -p $(OBJ)
 
-build: lstree
+build: pre lstree
 
 lstree: lstree.o
 	$(CC) $(OBJ)/lstree.o -o $(BIN)/lstree
@@ -23,6 +23,9 @@ lstree.o: $(SRC)/lstree.c
 
 chmod:
 	chmod +x $(BIN)/*
+
+install: build
+	mv $(BIN)/lstree /usr/bin
 
 clean:
 	rm -rf $(BIN)/*
